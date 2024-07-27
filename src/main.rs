@@ -44,6 +44,24 @@ fn process_entry(entry: &FileStructureEntry, base_path: &Path) -> std::io::Resul
     Ok(())
 }
 
+fn print_help_message() {
+    println!("The JSON file should follow this structure:");
+    println!("[");
+    println!("  {{");
+    println!("    \"path\": \"path/to/item\",");
+    println!("    \"type\": \"dir\" | \"file\",");
+    println!("    \"content\": \"optional file content\",");
+    println!("    \"children\": [");
+    println!("      {{");
+    println!("        \"path\": \"path/to/child\",");
+    println!("        \"type\": \"dir\" | \"file\",");
+    println!("        \"content\": \"optional file content\"");
+    println!("      }}");
+    println!("    ] (optional)");
+    println!("  }}");
+    println!("]");
+}
+
 fn main() -> std::io::Result<()> {
     // Prompt user for the base path
     print!("Enter the base path for the project: ");
@@ -73,17 +91,36 @@ fn main() -> std::io::Result<()> {
         return Ok(());
     }
 
-    // Read the JSON file
-    let file_content = fs::read_to_string(json_path)?;
-    let entries: Vec<FileStructureEntry> = serde_json::from_str(&file_content)?;
+    // Read and parse the JSON file
+    let file_content = match fs::read_to_string(json_path) {
+        Ok(content) => content,
+        Err(err) => {
+            eprintln!("Error reading JSON file: {}", err);
+            print_help_message();
+            return Ok(());
+        }
+    };
 
-    // Create directories and files
-    let base_path = Path::new(base_path);
-    for entry in entries {
-        process_entry(&entry, base_path)?;
+    let entries: Result<Vec<FileStructureEntry>, serde_json::Error> =
+        serde_json::from_str(&file_content);
+
+    match entries {
+        Ok(entries) => {
+            // Create directories and files
+            let base_path = Path::new(base_path);
+            for entry in entries {
+                if let Err(err) = process_entry(&entry, base_path) {
+                    eprintln!("Error creating files: {}", err);
+                    return Ok(());
+                }
+            }
+            println!("File structure created successfully!");
+        }
+        Err(err) => {
+            eprintln!("Error parsing JSON file: {}", err);
+            print_help_message();
+        }
     }
-
-    println!("File structure created successfully!");
 
     Ok(())
 }

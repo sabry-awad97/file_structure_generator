@@ -1,0 +1,60 @@
+[
+  {
+    "path": "src",
+    "type": "dir",
+    "children": [
+      {
+        "path": "main.rs",
+        "type": "file",
+        "content": "// Main entry point of the Rust application"
+      },
+      {
+        "path": "lib.rs",
+        "type": "file",
+        "content": "// Library code"
+      },
+      {
+        "path": "tests",
+        "type": "dir",
+        "children": [
+          {
+            "path": "integration_test.rs",
+            "type": "file",
+            "content": "// Integration tests"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "tests",
+    "type": "dir",
+    "children": [
+      {
+        "path": "unit_test.rs",
+        "type": "file",
+        "content": "// Unit tests"
+      }
+    ]
+  },
+  {
+    "path": "Cargo.toml",
+    "type": "file",
+    "content": "[package]\nname = \"my_project\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[dependencies]\n"
+  },
+  {
+    "path": "Cargo.lock",
+    "type": "file",
+    "content": ""
+  },
+  {
+    "path": ".gitignore",
+    "type": "file",
+    "content": "target/\nCargo.lock\n"
+  },
+  {
+    "path": "README.md",
+    "type": "file",
+    "content": "# My Project\n\nThis is a sample project."
+  }
+]
